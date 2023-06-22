@@ -1,0 +1,22 @@
+#gameFloor{
+    display: grid;
+    grid-template-columns: repeat(50, 10px);
+}
+.tile{
+    width: 10px;
+    height: 10px;
+    background-color: rgb(69, 73, 69);
+    border: solid 1px black;
+}
+.snake{
+    width: 10px;
+    height: 10px;
+    background-color: rgb(27, 197, 27);
+    border: solid 1px black;
+}
+.mouse{
+    width: 10px;
+    height: 10px;
+    background-color: rgb(241, 6, 6);
+    border: solid 1px black;
+}
