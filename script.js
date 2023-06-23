@@ -1,10 +1,17 @@
 let gameFloor = document.getElementById('gameFloor');
+let scoreDiv = document.getElementById("score");
+let scoreDiplay = document.createElement("p");
+scoreDiplay.innerText = "SCORE : "+0;
+scoreDiv.append(scoreDiplay);
+let bestScore = 0 ;
 // Class Snake
 class Snake {
   constructor() {
     this.snakeSegments = []; // array of snake's organs : le tail at the beginging and the head at the end
     this.mouseIndex = 0;
     this.direction = 0;
+    this.speed = 0.1;
+    this.score = 0;
   }
 
   generateGrid() {
@@ -14,7 +21,7 @@ class Snake {
       gameFloor.append(tile);
     }
   }
-  
+
   getGridDimensions() {
     const computedStyle = window.getComputedStyle(gameFloor);
     const gridColumnTemplate = computedStyle.gridTemplateColumns;
@@ -43,13 +50,13 @@ class Snake {
     if (gameFloor.children[nextTileIndex].className != 'mouse' && gameFloor.children[nextTileIndex].className != 'snake') {
       const tailIndex = this.snakeSegments.shift(); // delete the tail of the snake
       gameFloor.children[tailIndex].className = 'tile';
-
       this.snakeSegments.push(nextTileIndex); // add the head of the snake
       gameFloor.children[nextTileIndex].className = 'snake';
     } else if (gameFloor.children[nextTileIndex].className == 'mouse') {
       this.snakeSegments.push(nextTileIndex); // add a new head to the snake after eating
       gameFloor.children[nextTileIndex].className = 'snake';
-
+      this.score+=1;
+      this.updateScore();
       const newMouseIndex = this.generateMouse();
       this.mouseIndex = newMouseIndex;
     }
@@ -71,7 +78,13 @@ class Snake {
   stopGame() {
     clearInterval(this.gameInterval);
     document.removeEventListener("keydown", this.control.bind(this));
-    alert("Game Over");
+    if(this.score > bestScore ){
+      bestScore = this.score ;
+      alert("Game Over! Your score is : " + this.score + " points ! You have a new record !" );
+    }else{
+      alert("Game Over! Your score is : " + this.score + " points !" );
+    }
+ 
     // reset game after ok
     this.resetGame();
   }
@@ -106,7 +119,7 @@ class Snake {
     const initialSnakeIndex = Math.floor(1 + Math.random() * gameFloor.childElementCount);
     this.snakeSegments.push(initialSnakeIndex);
     gameFloor.children[initialSnakeIndex].className = "snake";
-    setInterval(this.moveSnake.bind(this), 200);
+    setInterval(this.moveSnake.bind(this), this.speed*9000);
     document.addEventListener("keydown", this.control.bind(this));
     this.generateMouse();
   }
@@ -118,9 +131,15 @@ class Snake {
     }
     this.mouseIndex = 0;
     this.direction = 0;
+    this.score = 0;
+    this.speed+=0.1;
     this.generateGrid();
     // start the new game
     this.startGame();
+  }
+  updateScore(){
+    scoreDiplay.innerText = "SCORE : "+this.score.toString();
+   
   }
 }
 
