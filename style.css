@@ -1,17 +1,30 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+body{
+    display: flex;
+    justify-content: center;
+    padding: 300px;
+    background-color: #2c3a5e;
+}
 #gameFloor{
     display: grid;
     grid-template-columns: repeat(50, 10px);
+ 
+    row-gap: 1px;
 }
 .tile{
     width: 10px;
     height: 10px;
-    background-color: rgb(69, 73, 69);
+    background-color: #a3ce05;
     border: solid 1px black;
+  /*   margin: 1px; */
 }
 .snake{
     width: 10px;
     height: 10px;
-    background-color: rgb(27, 197, 27);
+    background-color: #242424;
     border: solid 1px black;
 }
 .mouse{
