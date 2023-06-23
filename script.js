@@ -1,6 +1,4 @@
 let gameFloor = document.getElementById('gameFloor');
-let width = 59;
-
 // Class Snake
 class Snake {
   constructor() {
@@ -16,7 +14,7 @@ class Snake {
       gameFloor.append(tile);
     }
   }
-
+  
   getGridDimensions() {
     const computedStyle = window.getComputedStyle(gameFloor);
     const gridColumnTemplate = computedStyle.gridTemplateColumns;
@@ -56,10 +54,39 @@ class Snake {
       this.mouseIndex = newMouseIndex;
     }
   }
+  isWallCollision(nextTileIndex, dimensions) {
+    const { columns, rows } = dimensions;
 
+    const nextTileRow = Math.floor(nextTileIndex / columns) + 1;
+    const nextTileColumn = (nextTileIndex % columns) + 1;
+
+    return (
+      nextTileRow === 0 || // check collision with top wall
+      nextTileRow === rows +1|| // check collision with buttom wall
+      nextTileColumn === 0 || // check collision with left wall
+      nextTileColumn === columns // check collision with right wall
+    );
+  }
+
+  stopGame() {
+    clearInterval(this.gameInterval);
+    document.removeEventListener("keydown", this.control.bind(this));
+    alert("Game Over");
+    // reset game after ok
+    this.resetGame();
+  }
   moveSnake() {
     const headIndex = this.snakeSegments[this.snakeSegments.length - 1];
     const nextTileIndex = headIndex + this.direction;
+    // check if hit the wall
+    const dimensions = this.getGridDimensions();
+    const isWallHit = this.isWallCollision(nextTileIndex, dimensions);
+
+    if (isWallHit) {
+      this.stopGame();
+      return;
+    }
+
     this.switchClass(nextTileIndex);
   }
 
@@ -79,9 +106,21 @@ class Snake {
     const initialSnakeIndex = Math.floor(1 + Math.random() * gameFloor.childElementCount);
     this.snakeSegments.push(initialSnakeIndex);
     gameFloor.children[initialSnakeIndex].className = "snake";
-    setInterval(this.moveSnake.bind(this), 500);
+    setInterval(this.moveSnake.bind(this), 200);
     document.addEventListener("keydown", this.control.bind(this));
     this.generateMouse();
+  }
+  resetGame() {
+    // reset snake segments
+    this.snakeSegments = [];    // delete de tiles of the grig
+    while (gameFloor.firstChild) {
+      gameFloor.removeChild(gameFloor.firstChild); // reset direction and mouse index
+    }
+    this.mouseIndex = 0;
+    this.direction = 0;
+    this.generateGrid();
+    // start the new game
+    this.startGame();
   }
 }
 
